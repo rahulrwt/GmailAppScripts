@@ -1,0 +1,27 @@
+function killSpam() {
+    var count = 0;
+    var threads = GmailApp.getInboxThreads();
+    var res = UrlFetchApp.fetch("https://gist.githubusercontent.com/rahulrwt/GoogleScripts/DeleteSpamMails/spamDomains/raw");
+    var domains = res.getContentText().split(/\r?\n/);
+    var deleted = [];
+
+    for (const thread of threads) {
+        var message = thread.getMessages()[0];
+        var from = message.getFrom().split(" ");
+        var fromAddress = from[from.length - 1].replace(">", "").replace("<", "");
+
+        var isSpam = domains.some(function (spamDomain) {
+            var mailPart = fromAddress.slice(-spamDomain.length - 1);
+            return mailPart.length === spamDomain.length ? mailPart === spamDomain : mailPart.slice(1) === spamDomain && (mailPart[0] === "." || mailPart[0] === "@")
+        })
+
+        if (isSpam) {
+            thread.moveToTrash();
+            deleted.push(message.getFrom())
+            count++;
+        }
+    }
+
+    Logger.log("Total: " + count);
+    Logger.log("Removed: " + deleted.join(", "));
+}
