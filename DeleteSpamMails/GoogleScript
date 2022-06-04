@@ -1,7 +1,7 @@
 function killSpam() {
     var count = 0;
     var threads = GmailApp.getInboxThreads();
-    var res = UrlFetchApp.fetch("https://gist.githubusercontent.com/rahulrwt/GoogleScripts/DeleteSpamMails/spamDomains/raw");
+    var res = UrlFetchApp.fetch("https://raw.githubusercontent.com/rahulrwt/GoogleScripts/main/DeleteSpamMails/spamDomains");
     var domains = res.getContentText().split(/\r?\n/);
     var deleted = [];
 
